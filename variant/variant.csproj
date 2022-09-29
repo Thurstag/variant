@@ -1,7 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <RootNamespace>System</RootNamespace>
-        
+
         <AssemblyName>variant</AssemblyName>
     </PropertyGroup>
+
+    <Target Name="GenerateSource" BeforeTargets="BeforeBuild">
+        <Exec Command="dotnet t4 %(TextTemplate.Identity) -o src\%(TextTemplate.Filename).Generated.cs -p:VariantArgumentTypesCount=$(VariantArgumentTypesCount)" WorkingDirectory="$(ProjectDir)" />
+    </Target>
+    <Target Name="CleanGeneratedSource" AfterTargets="Clean">
+        <Delete Files="@(Generated)" />
+    </Target>
+
+    <ItemGroup>
+        <TextTemplate Include="**\*.tt"/>
+        <Generated Include="**\*.Generated.cs"/>
+        
+        <PackageReference Include="Mono.TextTemplating" Version="2.2.1"/>
+    </ItemGroup>
 </Project>
