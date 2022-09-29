@@ -5,5 +5,7 @@
         <Nullable>enable</Nullable>
 
         <WarningsAsErrors>CS8600;CS8601;CS8602;CS8603;IDE0010;IDE0072;IDE0073</WarningsAsErrors>
+        
+        <VariantArgumentTypesCount>10</VariantArgumentTypesCount>
     </PropertyGroup>
 </Project>
