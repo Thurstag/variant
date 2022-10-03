@@ -1,0 +1,82 @@
+<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ include file="..\..\variant\src\Functions.ttinclude" #>
+<#@ parameter type="System.Int32" name="VariantArgumentTypesCount" #>
+// Copyright 20222-<#= DateTime.Now.Year #> variant Project
+// Licensed under Apache License 2.0 or any later version
+// Refer to the LICENSE file included.
+
+using NUnit.Framework;
+
+namespace System.Tests;
+
+<#
+    (string type, string constantName, string constantValue)[] testTypes = {
+        ("string", "String", "\"test\""),
+        ("bool", "Bool", "true"),
+        ("byte", "Byte", "6"),
+        ("sbyte", "SByte", "-100"),
+        ("short", "Short", "-342"),
+        ("int", "Int", "-64895623"),
+        ("ulong", "ULong", "6489562389652"),
+        ("char", "Char", "'e'"),
+        ("float", "Float", "1e-4f"),
+        ("double", "Double", "42e-99")
+    };
+    const string mapper = "o => o.GetHashCode()";
+#>
+// TODO: Doc
+static class Values {
+<#
+    foreach (var (type, constantName, constantValue) in testTypes) {
+#>
+    public const <#= type #> <#= constantName #> = <#= constantValue #>;
+<#
+    }
+#>
+}
+<#
+    for (var variant = 0; variant < VariantArgumentTypesCount; variant++) {
+        var variantTestTypes = testTypes.Take(variant + 1).ToArray();
+        var variantTypeParameters = variantTestTypes.Select(argType => argType.type).ToList();
+        var variantType = VariantType(variantTypeParameters);
+#>
+
+/// <summary>
+/// Tests for <#= SeeVariantType(Enumerable.Range(0, variant + 1).Select(VariantTypeParameter)) #>
+/// </summary>
+[TestFixture]
+public class Variant<#= variant + 1 #>Test {
+    /// <summary>
+    /// Variant to tests
+    /// </summary>
+    private static readonly (<#= variantType #>, int)[] TestCases = {
+<#
+        foreach (var (_, constantName, _) in variantTestTypes) {
+#>
+        (Values.<#= constantName #>, Values.<#= constantName #>.GetHashCode()),
+<#
+        }
+        foreach (var variantSubsetTypeParameters in SubLists(variantTypeParameters).Select(l => l.ToArray())) {
+            foreach (var (type, constantName, _) in variantTestTypes) {
+                if (!variantSubsetTypeParameters.Contains(type)) {
+                    continue;
+                }
+#>
+        ((<#= VariantType(variantSubsetTypeParameters) #>)Values.<#= constantName #>, Values.<#= constantName #>.GetHashCode()),
+<#
+            }
+        }
+#>
+    };
+
+    [Test, TestCaseSource(nameof(TestCases))]
+    public void Map((<#= variantType #> variant, int expectedHashCode) @case) {
+        Assert.That(@case.variant.Map(<#= string.Join(", ", variantTypeParameters.Select(_ => mapper)) #>), Is.EqualTo(@case.expectedHashCode));
+    }
+}
+<#
+    }
+#>

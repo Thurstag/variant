@@ -1,7 +1,7 @@
 <#@ template language="C#" #>
 <#@ assembly name="System.Core" #>
-<#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Linq" #>
+<#@ include file="Functions.ttinclude" #>
 <#@ parameter type="System.Int32" name="VariantArgumentTypesCount" #>
 // Copyright 20222-<#= DateTime.Now.Year #> variant Project
 // Licensed under Apache License 2.0 or any later version
@@ -109,30 +109,5 @@ public abstract class <#= variantType #> {
 }
 
 <#
-            }
-            
-            string VariantType(IEnumerable<string> types) => $"Variant<{string.Join(", ", types)}>";
-
-            string SeeVariantType(IEnumerable<string> types) => $"<see cref=\"Variant{{{string.Join(", ", types)}}}\"/>";
-
-            string VariantImplType(int index) => $"T{index}Variant";
-
-            string VariantTypeParameter(int index) => $"T{index}";
-
-            IEnumerable<IEnumerable<T>> SubLists<T>(IList<T> list) {
-                for (var i = 0; i < list.Count; i++) {
-                    for (var subsetLength = 1; subsetLength <= list.Count; subsetLength++) {
-                        if (i != 0 || subsetLength != list.Count) {
-                            yield return Enumerable.Range(i, subsetLength).Select(index => list[index % list.Count]);
-                        }
-
-                        if (subsetLength > 1 && list.Count > 2) {
-                            yield return Enumerable.Range(i, subsetLength).Select(index => {
-                                var negIndex = -index;
-                                return list[negIndex - (int)Math.Floor((double)negIndex / list.Count) * list.Count];
-                            });
-                        }
-                    }
-                }
             }
 #>
