@@ -19,17 +19,19 @@ env:
   dotnet-version: 6.0.x
 
 jobs:
-  build:
-    name: Build project
+  test:
+    name: Run tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout project
-        uses: actions/checkout@v2
-      - name: Set up dotnet environment
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: ${{env.dotnet-version}}
-      - name: Set up tools
-        run: dotnet tool restore
-      - name: Build project
-        run: dotnet build .
+      -   name: Checkout project
+          uses: actions/checkout@v2
+      -   name: Set up dotnet environment
+          uses: actions/setup-dotnet@v2
+          with:
+            dotnet-version: ${{env.dotnet-version}}
+      -   name: Set up tools
+          run: dotnet tool restore
+      -   name: Build project
+          run: dotnet build .
+      -   name: Run tests
+          run: dotnet test . -l "console;verbosity=detailed"

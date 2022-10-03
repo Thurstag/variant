@@ -2,7 +2,7 @@
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Linq" #>
-<#@ include file="..\..\variant\src\Functions.ttinclude" #>
+<#@ include file="../../variant/src/Functions.ttinclude" #>
 <#@ parameter type="System.Int32" name="VariantArgumentTypesCount" #>
 // Copyright 20222-<#= DateTime.Now.Year #> variant Project
 // Licensed under Apache License 2.0 or any later version
