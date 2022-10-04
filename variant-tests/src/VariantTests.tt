@@ -11,7 +11,6 @@
 using NUnit.Framework;
 
 namespace System.Tests;
-
 <#
     (string type, string constantName, string constantValue)[] testTypes = {
         ("string", "String", "\"test\""),
@@ -27,15 +26,35 @@ namespace System.Tests;
     };
     const string mapper = "o => o.GetHashCode()";
 #>
-// TODO: Doc
-static class Values {
+
+/// <summary>
+/// Values held by variants
+/// </summary>
+[TestFixture]
+public class VariantValues {
+
 <#
     foreach (var (type, constantName, constantValue) in testTypes) {
 #>
     public const <#= type #> <#= constantName #> = <#= constantValue #>;
 <#
     }
+    
 #>
+
+    [Test]
+    public void HashCodes() {
+        Assert.That(new int[] { 
+<#
+    foreach (var (_, constantName, _) in testTypes) {
+#>
+            <#= constantName #>.GetHashCode(),
+<#
+    }
+    
+#>
+        }, Is.Unique);
+    }
 }
 <#
     for (var variant = 0; variant < VariantArgumentTypesCount; variant++) {
@@ -49,6 +68,7 @@ static class Values {
 /// </summary>
 [TestFixture]
 public class Variant<#= variant + 1 #>Test {
+
     /// <summary>
     /// Variant to tests
     /// </summary>
@@ -56,7 +76,7 @@ public class Variant<#= variant + 1 #>Test {
 <#
         foreach (var (_, constantName, _) in variantTestTypes) {
 #>
-        (Values.<#= constantName #>, Values.<#= constantName #>.GetHashCode()),
+        (VariantValues.<#= constantName #>, VariantValues.<#= constantName #>.GetHashCode()),
 <#
         }
         foreach (var variantSubsetTypeParameters in SubLists(variantTypeParameters).Select(l => l.ToArray())) {
@@ -65,7 +85,7 @@ public class Variant<#= variant + 1 #>Test {
                     continue;
                 }
 #>
-        ((<#= VariantType(variantSubsetTypeParameters) #>)Values.<#= constantName #>, Values.<#= constantName #>.GetHashCode()),
+        ((<#= VariantType(variantSubsetTypeParameters) #>)VariantValues.<#= constantName #>, VariantValues.<#= constantName #>.GetHashCode()),
 <#
             }
         }
