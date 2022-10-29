@@ -57,7 +57,7 @@ public class VariantValues {
     }
 }
 <#
-    for (var variant = 0; variant < VariantArgumentTypesCount; variant++) {
+    for (var variant = 1; variant < VariantArgumentTypesCount; variant++) {
         var variantTestTypes = testTypes.Take(variant + 1).ToArray();
         var variantTypeParameters = variantTestTypes.Select(argType => argType.type).ToList();
         var variantType = VariantType(variantTypeParameters);
