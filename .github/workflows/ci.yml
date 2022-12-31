@@ -15,9 +15,6 @@ on:
             - "*"
     workflow_dispatch:
 
-env:
-    dotnet-version: 6.0.x
-
 jobs:
     format:
         name: Verify code format
@@ -25,26 +22,18 @@ jobs:
         steps:
             -   name: Checkout project
                 uses: actions/checkout@v2
-            -   name: Set up dotnet environment
-                uses: actions/setup-dotnet@v2
-                with:
-                    dotnet-version: ${{env.dotnet-version}}
+            -   name: Build project
+                uses: ./.github/workflows/build-project
             -   name: Verify code
                 run: dotnet format . --verify-no-changes -v d
     test:
         name: Run tests
         runs-on: ubuntu-latest
+        needs: format
         steps:
             -   name: Checkout project
                 uses: actions/checkout@v2
-            -   name: Set up dotnet environment
-                uses: actions/setup-dotnet@v2
-                with:
-                    dotnet-version: ${{env.dotnet-version}}
-            -   name: Set up tools
-                run: dotnet tool restore
             -   name: Build project
-                # Build variant first to avoid compilation errors in projects referencing variant library
-                run: dotnet build variant ; dotnet build .
+                uses: ./.github/workflows/build-project
             -   name: Run tests
                 run: dotnet test . -l "console;verbosity=detailed"
