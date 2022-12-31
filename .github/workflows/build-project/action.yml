@@ -5,13 +5,13 @@ inputs:
     dotnet-version:
         description: "Version of dotnet"
         required: true
-        default: 6.0.x
+        default: 7.x
 
 runs:
     using: "composite"
     steps:
         -   name: Set up dotnet environment
-            uses: actions/setup-dotnet@v2
+            uses: actions/setup-dotnet@v3
             with:
                 dotnet-version: ${{inputs.dotnet-version}}
         -   name: Set up dotnet tools

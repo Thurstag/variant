@@ -21,7 +21,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: Checkout project
-                uses: actions/checkout@v2
+                uses: actions/checkout@v3
             -   name: Build project
                 uses: ./.github/workflows/build-project
             -   name: Verify code
@@ -32,7 +32,7 @@ jobs:
         needs: format
         steps:
             -   name: Checkout project
-                uses: actions/checkout@v2
+                uses: actions/checkout@v3
             -   name: Build project
                 uses: ./.github/workflows/build-project
             -   name: Run tests
