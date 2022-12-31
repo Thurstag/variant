@@ -4,7 +4,7 @@
 <#@ import namespace="System.Linq" #>
 <#@ include file="../../variant/src/Functions.ttinclude" #>
 <#@ parameter type="System.Int32" name="VariantArgumentTypesCount" #>
-// Copyright 20222-<#= DateTime.Now.Year #> variant Project
+// Copyright 2022-<#= DateTime.Now.Year #> variant Project
 // Licensed under Apache License 2.0 or any later version
 // Refer to the LICENSE file included.
 
@@ -57,7 +57,7 @@ public class VariantValues {
     }
 }
 <#
-    for (var variant = 0; variant < VariantArgumentTypesCount; variant++) {
+    for (var variant = 1; variant < VariantArgumentTypesCount; variant++) {
         var variantTestTypes = testTypes.Take(variant + 1).ToArray();
         var variantTypeParameters = variantTestTypes.Select(argType => argType.type).ToList();
         var variantType = VariantType(variantTypeParameters);

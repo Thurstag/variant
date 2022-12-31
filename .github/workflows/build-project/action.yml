@@ -1,0 +1,23 @@
+name: Build project
+description: Set up the environment and build the project
+
+inputs:
+    dotnet-version:
+        description: "Version of dotnet"
+        required: true
+        default: 6.0.x
+
+runs:
+    using: "composite"
+    steps:
+        -   name: Set up dotnet environment
+            uses: actions/setup-dotnet@v2
+            with:
+                dotnet-version: ${{inputs.dotnet-version}}
+        -   name: Set up dotnet tools
+            run: dotnet tool restore
+            shell: bash
+        -   name: Build dotnet solution
+            # Build variant first to avoid compilation errors in projects referencing variant library
+            run: dotnet build variant ; dotnet build .
+            shell: bash

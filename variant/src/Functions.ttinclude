@@ -1,23 +1,20 @@
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="System.Linq" #>
 <#+
     static string VariantType(IEnumerable<string> types) => $"Variant<{string.Join(", ", types)}>";
 
     static string SeeVariantType(IEnumerable<string> types) => $"<see cref=\"Variant{{{string.Join(", ", types)}}}\"/>";
 
-    static string VariantImplType(int index) => $"T{index}Variant";
-
     static string VariantTypeParameter(int index) => $"T{index}";
 
     static IEnumerable<IEnumerable<T>> SubLists<T>(IList<T> list) {
         for (var i = 0; i < list.Count; i++) {
-            for (var subsetLength = 1; subsetLength <= list.Count; subsetLength++) {
+            for (var subsetLength = 2; subsetLength <= list.Count; subsetLength++) {
                 if (i != 0 || subsetLength != list.Count) {
                     yield return Enumerable.Range(i, subsetLength).Select(index => list[index % list.Count]);
                 }
 
-                if (subsetLength > 1 && list.Count > 2) {
+                if (list.Count > 2) {
                     yield return Enumerable.Range(i, subsetLength).Select(index => {
                         var negIndex = -index;
                         return list[negIndex - (int)Math.Floor((double)negIndex / list.Count) * list.Count];
