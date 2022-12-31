@@ -3,7 +3,7 @@
 <#@ import namespace="System.Linq" #>
 <#@ include file="Functions.ttinclude" #>
 <#@ parameter type="System.Int32" name="VariantArgumentTypesCount" #>
-// Copyright 20222-<#= DateTime.Now.Year #> variant Project
+// Copyright 2022-<#= DateTime.Now.Year #> variant Project
 // Licensed under Apache License 2.0 or any later version
 // Refer to the LICENSE file included.
 
