@@ -24,7 +24,6 @@ namespace System.Tests;
         ("float", "Float", "1e-4f"),
         ("double", "Double", "42e-99")
     };
-    const string mapper = "o => o.GetHashCode()";
 #>
 
 /// <summary>
@@ -94,8 +93,16 @@ public class Variant<#= variant + 1 #>Test {
     };
 
     [Test, TestCaseSource(nameof(TestCases))]
-    public void Map((<#= variantType #> variant, int expectedHashCode) @case) {
-        Assert.That(@case.variant.Map(<#= string.Join(", ", variantTypeParameters.Select(_ => mapper)) #>), Is.EqualTo(@case.expectedHashCode));
+    public void MapSwitch((<#= variantType #> variant, int expectedHashCode) @case) {
+        var variant = @case.variant;
+
+        // Map
+        Assert.That(variant.Map(<#= string.Join(", ", variantTypeParameters.Select(_ => "o => o.GetHashCode()")) #>), Is.EqualTo(@case.expectedHashCode));
+
+        // Switch
+        int? actualHashCode = null;
+        variant.Switch(<#= string.Join(", ", variantTypeParameters.Select(_ => "o => actualHashCode = o.GetHashCode()")) #>);
+        Assert.That(actualHashCode, Is.EqualTo(@case.expectedHashCode));
     }
 
     [Test]
