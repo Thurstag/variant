@@ -32,6 +32,7 @@ jobs:
       -   name: Set up tools
           run: dotnet tool restore
       -   name: Build project
-          run: dotnet build .
+          # Build variant first to avoid compilation errors in projects referencing variant library
+          run: dotnet build variant ; dotnet build .
       -   name: Run tests
           run: dotnet test . -l "console;verbosity=detailed"
