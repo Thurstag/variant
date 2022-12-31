@@ -61,10 +61,11 @@ public class VariantValues {
         var variantTestTypes = testTypes.Take(variant + 1).ToArray();
         var variantTypeParameters = variantTestTypes.Select(argType => argType.type).ToList();
         var variantType = VariantType(variantTypeParameters);
+        var seeVariantType = SeeVariantType(Enumerable.Range(0, variant + 1).Select(VariantTypeParameter));
 #>
 
 /// <summary>
-/// Tests for <#= SeeVariantType(Enumerable.Range(0, variant + 1).Select(VariantTypeParameter)) #>
+/// Tests for <#= seeVariantType #>
 /// </summary>
 [TestFixture]
 public class Variant<#= variant + 1 #>Test {
@@ -95,6 +96,61 @@ public class Variant<#= variant + 1 #>Test {
     [Test, TestCaseSource(nameof(TestCases))]
     public void Map((<#= variantType #> variant, int expectedHashCode) @case) {
         Assert.That(@case.variant.Map(<#= string.Join(", ", variantTypeParameters.Select(_ => mapper)) #>), Is.EqualTo(@case.expectedHashCode));
+    }
+
+    [Test]
+    public void EqualsHashCode() {
+        var testCases = TestCases[..<#= variant + 1 #>];
+
+        // Null
+        var firstVariant = testCases[0].Item1;
+        Assert.That(firstVariant == null, Is.False);
+        Assert.That(firstVariant != null, Is.True);
+        Assert.That(null == firstVariant, Is.False);
+        Assert.That(null != firstVariant, Is.True);
+        Assert.That(firstVariant.Equals(null), Is.False);
+
+        // Reference
+#pragma warning disable CS1718
+        Assert.That(firstVariant == firstVariant, Is.True);
+        Assert.That(firstVariant != firstVariant, Is.False);
+#pragma warning restore CS1718
+        Assert.That(firstVariant.Equals(firstVariant), Is.True);
+
+        // Type
+        Assert.That(firstVariant.Equals(new byte[]{ 1, 2, 3 }), Is.False);
+        var extendedVariant = new Variant();
+        Assert.That(firstVariant == extendedVariant, Is.False);
+        Assert.That(firstVariant != extendedVariant, Is.True);
+
+        // Content
+        var testCasesLength = testCases.Length;
+        for (int i = 0; i < testCasesLength; i++) {
+            var variant = testCases[i].Item1;
+
+            for (int j = 0; j < testCasesLength; j++) {
+                if (i < j) {
+                    var differentVariant = testCases[j].Item1;
+                    Assert.That(variant == differentVariant, Is.False);
+                    Assert.That(variant != differentVariant, Is.True);
+                }
+            }
+
+            var variantWithSameContent = TestCases[^<#= variant + 1 #>..][i].Item1;
+            Assert.That(variant == variantWithSameContent, Is.True);
+            Assert.That(variant != variantWithSameContent, Is.False);
+            Assert.That(variant.GetHashCode(), Is.EqualTo(variantWithSameContent.GetHashCode()));
+        }
+    }
+    
+    /// <summary>
+    /// <#= seeVariantType #> holding <see cref="VariantValues.String"/>
+    /// </summary>
+    public class Variant : <#= variantType #> {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public Variant() : base(VariantValues.String) { }
     }
 }
 <#

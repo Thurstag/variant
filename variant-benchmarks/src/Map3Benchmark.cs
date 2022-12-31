@@ -35,7 +35,7 @@ public abstract class Map3Benchmark<T0, T1, T2> where T2 : notnull where T1 : no
     protected Map3Benchmark(Func<T0> t0Supplier, Func<T1> t1Supplier, Func<T2> t2Supplier) {
         switch (RandomNumberGenerator.GetInt32(0, 3)) {
             case 0:
-                T0? t0 = t0Supplier();
+                T0 t0 = t0Supplier();
                 _variant = t0;
                 _oneOf = t0;
                 _union = t0;
@@ -43,7 +43,7 @@ public abstract class Map3Benchmark<T0, T1, T2> where T2 : notnull where T1 : no
                 break;
 
             case 1:
-                T1? t1 = t1Supplier();
+                T1 t1 = t1Supplier();
                 _variant = t1;
                 _oneOf = t1;
                 _union = t1;
@@ -51,7 +51,7 @@ public abstract class Map3Benchmark<T0, T1, T2> where T2 : notnull where T1 : no
                 break;
 
             case 2:
-                T2? t2 = t2Supplier();
+                T2 t2 = t2Supplier();
                 _variant = t2;
                 _oneOf = t2;
                 _union = t2;
