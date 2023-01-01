@@ -44,7 +44,8 @@ public class <#= variantType #> : IEquatable<<#= variantType #>> {
     /// <param name="<#= paramName #>">Value</param>
     /// </summary>
     public Variant(<#= variantTypeParameter #> <#= paramName #>) {
-        _value = <#= paramName #>;
+        // _value can contain null only if <#= variantTypeParameter #> is nullable
+        _value = <#= paramName #>!;
         _index = <#= constructor #>;
     }
 
@@ -64,17 +65,22 @@ public class <#= variantType #> : IEquatable<<#= variantType #>> {
     /// <typeparam name="T">Result type</typeparam>
     /// <returns>Mapping result</returns>
     public T Map<T>(<#= string.Join(", ", variantTypeParameters.Select(t => $"Func<{t}, T> map{t.ToUpper()}")) #>) {
+        // A switch statement is faster than a switch expression
+#pragma warning disable IDE0066
         switch (_index) {
 <#
         for (var @case = 0; @case <= variant; @case++) {
             var variantTypeParameter = VariantTypeParameter(@case);
 #>
-            case <#= @case #>: return map<#= variantTypeParameter #>((<#= variantTypeParameter #>) _value);
+            case <#= @case #>:
+                return map<#= variantTypeParameter #>((<#= variantTypeParameter #>) _value);
 <#
         }
 #>
-            default: throw new InvalidOperationException("Variant doesn't contain a value");
+            default:
+                throw new InvalidOperationException("Variant doesn't contain a value");
         }
+#pragma warning restore IDE0066
     }
 
     /// <summary>
@@ -93,17 +99,20 @@ public class <#= variantType #> : IEquatable<<#= variantType #>> {
         for (var @case = 0; @case <= variant; @case++) {
             var variantTypeParameter = VariantTypeParameter(@case);
 #>
-            case <#= @case #>: case<#= variantTypeParameter #>((<#= variantTypeParameter #>) _value); break;
+            case <#= @case #>:
+                case<#= variantTypeParameter #>((<#= variantTypeParameter #>) _value);
+                break;
 <#
         }
 #>
-            default: throw new InvalidOperationException("Variant doesn't contain a value");
+            default:
+                throw new InvalidOperationException("Variant doesn't contain a value");
         }
     }
 
-    public bool Equals(<#= variantType #> other) {
+    public bool Equals(<#= variantType #>? other) {
         // Null
-        if (ReferenceEquals(other, null)) {
+        if (other is null) {
             return false;
         }
 
@@ -111,30 +120,28 @@ public class <#= variantType #> : IEquatable<<#= variantType #>> {
         if (ReferenceEquals(this, other)) {
             return true;
         }
-            
-        // Type
-        if (GetType() != other.GetType()) {
-            return false;
-        }
 
-        return _index == other._index && Equals(_value, other._value);
+        // Type
+        return GetType() == other.GetType() &&
+        // Content        
+        _index == other._index && Equals(_value, other._value);
     }
-    
-    public override bool Equals(object obj) => Equals(obj as <#= variantType #>);
-    
+
+    public override bool Equals(object? obj) => Equals(obj as <#= variantType #>);
+
     public override int GetHashCode() => HashCode.Combine(_index, _value);
-    
+
     /// <summary>Test whether the values of two <#= seeVariantType #> objects are equal</summary>
     /// <param name="left">The first value to compare</param>
     /// <param name="right">The second value to compare</param>
     /// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false</returns>
-    public static bool operator==(<#= variantType #> left, <#= variantType #> right) => Equals(left, right);
+    public static bool operator ==(<#= variantType #>? left, <#= variantType #>? right) => Equals(left, right);
 
     /// <summary>Test whether two <#= seeVariantType #> objects have different values</summary>
     /// <param name="left">The first value to compare</param>
     /// <param name="right">The second value to compare</param>
     /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false</returns>
-    public static bool operator!=(<#= variantType #> left, <#= variantType #> right) => !(left == right);
+    public static bool operator !=(<#= variantType #>? left, <#= variantType #>? right) => !(left == right);
 <#
         // Implicit operators
         for (var @operator = 0; @operator <= variant; @operator++) {
@@ -147,7 +154,7 @@ public class <#= variantType #> : IEquatable<<#= variantType #>> {
     /// </summary>
     /// <param name="<#= argName #>">Conversion input</param>
     /// <returns>Variant</returns>
-    public static implicit operator <#= variantType #>(<#= argType #> <#= argName #>) => new <#= variantType #>(<#= argName #>);
+    public static implicit operator <#= variantType #>(<#= argType #> <#= argName #>) => new(<#= argName #>);
 <#
         }
         if (variantTypeParameters.Length > 1) {
@@ -165,9 +172,7 @@ public class <#= variantType #> : IEquatable<<#= variantType #>> {
             }
         }
 #>
-}
-
-<#
+}<#
     }
 
     string Nth(int number) => number switch {

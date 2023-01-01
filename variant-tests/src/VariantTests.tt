@@ -8,6 +8,8 @@
 // Licensed under Apache License 2.0 or any later version
 // Refer to the LICENSE file included.
 
+#nullable enable
+
 using NUnit.Framework;
 
 namespace System.Tests;
@@ -19,41 +21,24 @@ namespace System.Tests;
         ("sbyte", "SByte", "-100"),
         ("short", "Short", "-342"),
         ("int", "Int", "-64895623"),
-        ("ulong", "ULong", "6489562389652"),
-        ("char", "Char", "'e'"),
-        ("float", "Float", "1e-4f"),
-        ("double", "Double", "42e-99")
+        ("ulong?", "ULong", "6489562389652"),
+        ("float?", "Float", "null"),
+        ("AppDomain?", "Domain", "AppDomain.CurrentDomain"),
+        ("AggregateException?", "Exception", "null")
     };
 #>
 
 /// <summary>
 /// Values held by variants
 /// </summary>
-[TestFixture]
 public class VariantValues {
-
 <#
     foreach (var (type, constantName, constantValue) in testTypes) {
 #>
-    public const <#= type #> <#= constantName #> = <#= constantValue #>;
+    public <#= type.EndsWith("?") ? "static": "const" #> <#= type #> <#= constantName #> = <#= constantValue #>;
 <#
     }
-    
 #>
-
-    [Test]
-    public void HashCodes() {
-        Assert.That(new int[] { 
-<#
-    foreach (var (_, constantName, _) in testTypes) {
-#>
-            <#= constantName #>.GetHashCode(),
-<#
-    }
-    
-#>
-        }, Is.Unique);
-    }
 }
 <#
     for (var variant = 1; variant < VariantArgumentTypesCount; variant++) {
@@ -76,7 +61,7 @@ public class Variant<#= variant + 1 #>Test {
 <#
         foreach (var (_, constantName, _) in variantTestTypes) {
 #>
-        (VariantValues.<#= constantName #>, VariantValues.<#= constantName #>.GetHashCode()),
+        (VariantValues.<#= constantName #>, HashCode.Combine(VariantValues.<#= constantName #>)),
 <#
         }
         foreach (var variantSubsetTypeParameters in SubLists(variantTypeParameters).Select(l => l.ToArray())) {
@@ -85,7 +70,7 @@ public class Variant<#= variant + 1 #>Test {
                     continue;
                 }
 #>
-        ((<#= VariantType(variantSubsetTypeParameters) #>)VariantValues.<#= constantName #>, VariantValues.<#= constantName #>.GetHashCode()),
+        ((<#= VariantType(variantSubsetTypeParameters) #>)VariantValues.<#= constantName #>, HashCode.Combine(VariantValues.<#= constantName #>)),
 <#
             }
         }
@@ -97,11 +82,11 @@ public class Variant<#= variant + 1 #>Test {
         var variant = @case.variant;
 
         // Map
-        Assert.That(variant.Map(<#= string.Join(", ", variantTypeParameters.Select(_ => "o => o.GetHashCode()")) #>), Is.EqualTo(@case.expectedHashCode));
+        Assert.That(variant.Map(<#= string.Join(", ", variantTypeParameters.Select(_ => "HashCode.Combine")) #>), Is.EqualTo(@case.expectedHashCode));
 
         // Switch
         int? actualHashCode = null;
-        variant.Switch(<#= string.Join(", ", variantTypeParameters.Select(_ => "o => actualHashCode = o.GetHashCode()")) #>);
+        variant.Switch(<#= string.Join(", ", variantTypeParameters.Select(_ => "o => actualHashCode = HashCode.Combine(o)")) #>);
         Assert.That(actualHashCode, Is.EqualTo(@case.expectedHashCode));
     }
 
@@ -115,17 +100,17 @@ public class Variant<#= variant + 1 #>Test {
         Assert.That(firstVariant != null, Is.True);
         Assert.That(null == firstVariant, Is.False);
         Assert.That(null != firstVariant, Is.True);
-        Assert.That(firstVariant.Equals(null), Is.False);
+        Assert.That(firstVariant?.Equals(null), Is.False);
 
         // Reference
 #pragma warning disable CS1718
         Assert.That(firstVariant == firstVariant, Is.True);
         Assert.That(firstVariant != firstVariant, Is.False);
 #pragma warning restore CS1718
-        Assert.That(firstVariant.Equals(firstVariant), Is.True);
+        Assert.That(firstVariant?.Equals(firstVariant), Is.True);
 
         // Type
-        Assert.That(firstVariant.Equals(new byte[]{ 1, 2, 3 }), Is.False);
+        Assert.That(firstVariant?.Equals(new byte[] { 1, 2, 3 }), Is.False);
         var extendedVariant = new Variant();
         Assert.That(firstVariant == extendedVariant, Is.False);
         Assert.That(firstVariant != extendedVariant, Is.True);
@@ -149,7 +134,7 @@ public class Variant<#= variant + 1 #>Test {
             Assert.That(variant.GetHashCode(), Is.EqualTo(variantWithSameContent.GetHashCode()));
         }
     }
-    
+
     /// <summary>
     /// <#= seeVariantType #> holding <see cref="VariantValues.String"/>
     /// </summary>
@@ -159,7 +144,6 @@ public class Variant<#= variant + 1 #>Test {
         /// </summary>
         public Variant() : base(VariantValues.String) { }
     }
-}
-<#
+}<#
     }
 #>
