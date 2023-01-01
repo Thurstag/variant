@@ -8,6 +8,8 @@
 // Licensed under Apache License 2.0 or any later version
 // Refer to the LICENSE file included.
 
+#nullable enable
+
 using NUnit.Framework;
 
 namespace System.Tests;
