@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <Target Name="GenerateSource" BeforeTargets="BeforeBuild">
-        <Exec Command="dotnet t4 ../%(TextTemplate.Identity) -o %(TextTemplate.Filename).Generated.cs -p:VariantArgumentTypesCount=$(VariantArgumentTypesCount)" WorkingDirectory="$(ProjectDir)/src" />
+        <Exec Command="dotnet t4 ../%(TextTemplate.Identity) -o %(TextTemplate.Filename).t4.cs -p:VariantArgumentTypesCount=$(VariantArgumentTypesCount)" WorkingDirectory="$(ProjectDir)/src" />
     </Target>
     <Target Name="CleanGeneratedSource" AfterTargets="Clean">
         <Delete Files="@(Generated)" />
@@ -14,7 +14,7 @@
 
     <ItemGroup>
         <TextTemplate Include="**/*.tt" />
-        <Generated Include="**/*.Generated.cs" />
+        <Generated Include="**/*.t4.cs" />
         
         <PackageReference Include="Mono.TextTemplating" Version="2.2.1" />
     </ItemGroup>

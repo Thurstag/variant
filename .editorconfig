@@ -73,7 +73,7 @@ csharp_style_throw_expression = true:warning
 csharp_style_conditional_delegate_call = true:warning
 
 # Header
-file_header_template = Copyright 2022-2022 variant Project\nLicensed under Apache License 2.0 or any later version\nRefer to the LICENSE file included.
+file_header_template = Copyright 2022-2023 variant Project\nLicensed under Apache License 2.0 or any later version\nRefer to the LICENSE file included.
 
 # Var
 csharp_style_var_for_built_in_types = false:warning
