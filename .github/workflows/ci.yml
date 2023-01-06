@@ -36,4 +36,4 @@ jobs:
             -   name: Build project
                 uses: ./.github/workflows/build-project
             -   name: Run tests
-                run: dotnet test . -l "console;verbosity=detailed"
+                run: dotnet test . -l "console;verbosity=detailed" /p:CollectCoverage=true
