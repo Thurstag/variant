@@ -13,14 +13,20 @@ using Union;
 namespace System.Benchmarks;
 
 /// <summary>
-/// Abstract benchmark of <see cref="Variant{T0, T1, T2}.Map{T}(Func{T0, T}, Func{T1, T}, Func{T2, T})"/>
+/// Base class for benchmarks of <see cref="Variant{T0, T1, T2}.Map{T}(Func{T0, T}, Func{T1, T}, Func{T2, T})"/>
 /// </summary>
 /// <typeparam name="T0">1st possible value type of the variant</typeparam>
 /// <typeparam name="T1">2nd possible value type of the variant</typeparam>
 /// <typeparam name="T2">3rd possible value type of the variant</typeparam>
 [VeryLongRunJob]
 [DisassemblyDiagnoser, MemoryDiagnoser]
-public abstract class Map3Benchmark<T0, T1, T2> where T2 : notnull where T1 : notnull where T0 : notnull {
+public class Map3Benchmark<T0, T1, T2> where T2 : notnull where T1 : notnull where T0 : notnull {
+
+    private const int _typeArgumentsCount = 3;
+    private const int _t0Choice = 0;
+    private const int _t1Choice = 1;
+    private const int _t2Choice = 2;
+
     private readonly Variant<T0, T1, T2> _variant;
     private readonly OneOf<T0, T1, T2> _oneOf;
     private readonly Union<T0, T1, T2> _union;
@@ -33,8 +39,8 @@ public abstract class Map3Benchmark<T0, T1, T2> where T2 : notnull where T1 : no
     /// <param name="t1Supplier">Supplier returning a <see cref="T1"/></param>
     /// <param name="t2Supplier">Supplier returning a <see cref="T2"/></param>
     protected Map3Benchmark(Func<T0> t0Supplier, Func<T1> t1Supplier, Func<T2> t2Supplier) {
-        switch (RandomNumberGenerator.GetInt32(0, 3)) {
-            case 0:
+        switch (RandomNumberGenerator.GetInt32(0, _typeArgumentsCount)) {
+            case _t0Choice:
                 T0 t0 = t0Supplier();
                 _variant = t0;
                 _oneOf = t0;
@@ -42,7 +48,7 @@ public abstract class Map3Benchmark<T0, T1, T2> where T2 : notnull where T1 : no
                 _unionClass = t0;
                 break;
 
-            case 1:
+            case _t1Choice:
                 T1 t1 = t1Supplier();
                 _variant = t1;
                 _oneOf = t1;
@@ -50,7 +56,7 @@ public abstract class Map3Benchmark<T0, T1, T2> where T2 : notnull where T1 : no
                 _unionClass = t1;
                 break;
 
-            case 2:
+            case _t2Choice:
                 T2 t2 = t2Supplier();
                 _variant = t2;
                 _oneOf = t2;
