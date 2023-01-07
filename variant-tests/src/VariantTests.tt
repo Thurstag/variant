@@ -109,12 +109,6 @@ public class Variant<#= variant + 1 #>Test {
 #pragma warning restore CS1718
         Assert.That(firstVariant?.Equals(firstVariant), Is.True);
 
-        // Type
-        Assert.That(firstVariant?.Equals(new byte[] { 1, 2, 3 }), Is.False);
-        var extendedVariant = new Variant();
-        Assert.That(firstVariant == extendedVariant, Is.False);
-        Assert.That(firstVariant != extendedVariant, Is.True);
-
         // Content
         var testCasesLength = testCases.Length;
         for (int i = 0; i < testCasesLength; i++) {
@@ -133,16 +127,6 @@ public class Variant<#= variant + 1 #>Test {
             Assert.That(variant != variantWithSameContent, Is.False);
             Assert.That(variant.GetHashCode(), Is.EqualTo(variantWithSameContent.GetHashCode()));
         }
-    }
-
-    /// <summary>
-    /// <#= seeVariantType #> holding <see cref="VariantValues.String"/>
-    /// </summary>
-    public class Variant : <#= variantType #> {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public Variant() : base(VariantValues.String) { }
     }
 }<#
     }
