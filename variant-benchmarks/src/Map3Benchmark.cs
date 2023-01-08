@@ -35,9 +35,9 @@ public class Map3Benchmark<T0, T1, T2> where T2 : notnull where T1 : notnull whe
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="t0Supplier">Supplier returning a <see cref="T0"/></param>
-    /// <param name="t1Supplier">Supplier returning a <see cref="T1"/></param>
-    /// <param name="t2Supplier">Supplier returning a <see cref="T2"/></param>
+    /// <param name="t0Supplier">Supplier returning a <typeparamref name="T0"/></param>
+    /// <param name="t1Supplier">Supplier returning a <typeparamref name="T1"/></param>
+    /// <param name="t2Supplier">Supplier returning a <typeparamref name="T2"/></param>
     protected Map3Benchmark(Func<T0> t0Supplier, Func<T1> t1Supplier, Func<T2> t2Supplier) {
         switch (RandomNumberGenerator.GetInt32(0, _typeArgumentsCount)) {
             case _t0Choice:

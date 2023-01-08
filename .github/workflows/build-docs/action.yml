@@ -1,0 +1,23 @@
+name: Build documentation
+description: Build documentation with DocFX
+
+inputs:
+    docfx-conf-path:
+        description: "Path of docfx.json"
+        required: true
+        default: documentation/docfx.json
+
+runs:
+    using: "composite"
+    steps:
+        -   name: Build project
+            uses: ./.github/workflows/build-project
+        -   name: Create documentation landing page
+            shell: bash
+            run: cp README.md documentation/index.md
+        -   name: Build metadata
+            shell: bash
+            run: dotnet docfx metadata --warningsAsErrors ${{inputs.docfx-conf-path}}
+        -   name: Build website
+            shell: bash
+            run: dotnet docfx build --warningsAsErrors ${{inputs.docfx-conf-path}}
