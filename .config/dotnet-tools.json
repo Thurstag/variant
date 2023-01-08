@@ -7,6 +7,12 @@
       "commands": [
         "t4"
       ]
+    },
+    "docfx": {
+      "version": "2.60.0-preview.2",
+      "commands": [
+        "docfx"
+      ]
     }
   }
 }
