@@ -23,8 +23,8 @@
             },
             {
                 "files": [
-                    "articles/**.md",
-                    "articles/**/toc.yml",
+                    "wiki/**.md",
+                    "wiki/**/toc.yml",
                     "toc.yml",
                     "*.md"
                 ]
@@ -50,6 +50,10 @@
         ],
         "dest": "_site",
         "globalMetadataFiles": [],
+        "globalMetadata": {
+            "_enableSearch": true,
+            "_disableContribution": true
+        },
         "fileMetadataFiles": [],
         "template": [
             "default"
