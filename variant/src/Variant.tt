@@ -16,7 +16,7 @@ namespace System;
         var seeVariantType = SeeVariantType(variantTypeParameters);
 #>
 /// <summary>
-/// A type-safe union containing one of its type arguments at a time
+/// A type-safe union containing one of its <#= variantTypeParameters.Length #> type arguments at a time
 /// </summary>
 <#
         for (var i = 0; i < variantTypeParameters.Length; i++) {
@@ -46,9 +46,9 @@ public sealed class <#= variantType #> : IEquatable<<#= variantType #>> {
             var paramName = $"t{constructor}";
 #>
     /// <summary>
-    /// Create an instance of <#= seeVariantType #> containing a <see cref="<#= variantTypeParameter #>"/>
-    /// <param name="<#= paramName #>">Value</param>
+    /// Create an instance of <#= seeVariantType #> containing a <typeparamref name="<#= variantTypeParameter #>"/>
     /// </summary>
+    /// <param name="<#= paramName #>"><typeparamref name="<#= variantTypeParameter #>"/> instance</param>
     public Variant(<#= variantTypeParameter #> <#= paramName #>) {
         // _value can contain null only if <#= variantTypeParameter #> is nullable
         _value = <#= paramName #>!;
@@ -64,7 +64,7 @@ public sealed class <#= variantType #> : IEquatable<<#= variantType #>> {
 <#
         foreach (var variantTypeParameter in variantTypeParameters) {
 #>
-    /// <param name="map<#= variantTypeParameter #>">Function taking a <see cref="<#= variantTypeParameter #>"/> and returning a <see cref="T"/> </param>
+    /// <param name="map<#= variantTypeParameter #>">Function taking a <typeparamref name="<#= variantTypeParameter #>"/> and returning a <typeparamref name="T"/></param>
 <#
         }
 #>
@@ -96,7 +96,7 @@ public sealed class <#= variantType #> : IEquatable<<#= variantType #>> {
 <#
         foreach (var variantTypeParameter in variantTypeParameters) {
 #>
-    /// <param name="case<#= variantTypeParameter #>">Action taking a <see cref="<#= variantTypeParameter #>"/> </param>
+    /// <param name="case<#= variantTypeParameter #>">Action taking a <typeparamref name="<#= variantTypeParameter #>"/> </param>
 <#
         }
 #>
@@ -156,7 +156,7 @@ public sealed class <#= variantType #> : IEquatable<<#= variantType #>> {
 #>
 
     /// <summary>
-    /// Convert a <see cref="<#= argType #>"/> into a <#= seeVariantType #>
+    /// Convert a <typeparamref name="<#= argType #>"/> into a <#= seeVariantType #>
     /// </summary>
     /// <param name="<#= argName #>">Conversion input</param>
     /// <returns>Variant</returns>
