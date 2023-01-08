@@ -2,10 +2,6 @@ name: Build documentation
 description: Build documentation with DocFX
 
 inputs:
-    docfx-version:
-        description: "Version of DocFX"
-        required: true
-        default: 2.59.4
     docfx-conf-path:
         description: "Path of docfx.json"
         required: true
